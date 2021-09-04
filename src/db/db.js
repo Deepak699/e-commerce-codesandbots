@@ -1,8 +1,6 @@
 const mongoose = require("mongoose");
 mongoose
-  .connect(
-    "mongodb+srv://deepak:deepak12345@cluster0.ybj04.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
-  )
+  .connect(process.env.DB_URL)
   .then(() => {
     console.log("connected");
   })
