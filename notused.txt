@@ -1,0 +1,54 @@
+// route.patch("/getprod/:prodid?/:couponCode?", auth, async (req, res) => {
+//   try {
+//     if (!req.query.prodid && !req.query.couponCode) {
+//       const products = await Product.find();
+//       res.status(200).send(products);
+//     } else if (req.query.prodid && !req.query.couponCode) {
+//       const product = await Product.findById({ _id: req.query.prodid });
+//       res.status(200).send(product);
+//     } else if (req.query.prodid && req.query.couponCode) {
+//       const couponcode = await Discount.find({
+//         couponName: req.query.couponCode,
+//       });
+//       const product = await Product.findById({ _id: req.query.prodid });
+
+//       // const updatedProduct = await Product.findByIdAndUpdate(product._id, {
+//       //   discountedPrice: discountedPrice,
+//       // });
+//       const userID = req.user._id;
+//       const findUser = await Users.findById({ _id: userID });
+//       const len = findUser.couponAppliedItems.length;
+//       const user = await Users.findByIdAndUpdate(userID, {
+//         coupon: couponcode[0]._id,
+//         $push: { couponAppliedItems: product._id },
+//       });
+//       await user.save();
+
+//       Users.findById({ _id: user._id })
+//         .populate("coupon")
+//         .populate("couponAppliedItems")
+//         .then((items) => {
+//           items.couponAppliedItems.forEach((items) => {
+//             items.discountedPrice =
+//               (couponcode[0].percentage / 100) * items.price;
+//           });
+//           res.json(items);
+//         });
+//     }
+//     //  else if (!req.query.prodid && req.query.couponCode) {
+//     //   const couponcode = await Discount.find({
+//     //     couponName: req.query.couponCode,
+//     //   });
+//     //   const products = await Product.find();
+//     //   const userID = req.user._id;
+//     //   products.forEach(async (item) => {
+//     //     const prod = Product.findById({ id: item._id });
+//     //     const user = await Users.findByIdAndUpdate(userID, {
+//     //       coupon: couponcode[0]._id,
+//     //       couponAppliedItems: prod._id,
+//     //     });
+//     //     await user.save();
+//     //   });
+//     // }
+//   } catch (error) {}
+// });

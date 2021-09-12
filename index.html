@@ -1,0 +1,75 @@
+<button id="rzp-button1">Pay</button>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script
+  src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.4/axios.js"
+  integrity="sha512-un2apco0rYUiZXxbURvZ7oBq4u0cGrXaIbC4C1k5nAio6WRMyYvj8xKua3NqALOuu0F83zDha7nKoFCZzx26rg=="
+  crossorigin="anonymous"
+  referrerpolicy="no-referrer"
+></script>
+<script>
+  var user_id = "61330561b25532d74b0e838e";
+  axios
+    .post(`http://localhost:3000/orders/${user_id}`)
+    .then((response) => {
+      console.log(response.data);
+      var options = {
+        key: "rzp_test_OSGQa2GnUPloIb", // Enter the Key ID generated from the Dashboard
+        amount: "500", // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+        currency: "INR",
+        name: "Acme Corp",
+        description: "Test Transaction",
+        image: "https://example.com/your_logo",
+        order_id: response.data.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+        handler: function (response) {
+          const data = {
+            razorpay_payment_id: response.razorpay_payment_id,
+            razorpay_order_id: response.razorpay_order_id,
+            razorpay_signature: response.razorpay_signature,
+          };
+          axios
+            .post("http://localhost:3000/verify", data)
+            .then((response) => {
+              console.log(response);
+              if (response.status === 201) {
+                alert("Payment Succesfull");
+              }
+            })
+            .catch((e) => {
+              console.log(e);
+            });
+          console.log(response.razorpay_payment_id);
+          console.log(response.razorpay_order_id);
+          console.log(response.razorpay_signature);
+        },
+        prefill: {
+          name: "Gaurav Kumar",
+          email: "gaurav.kumar@example.com",
+          contact: "9999999999",
+        },
+        notes: {
+          address: "Razorpay Corporate Office",
+        },
+        theme: {
+          color: "#3399cc",
+        },
+      };
+      var rzp1 = new Razorpay(options);
+      rzp1.on("payment.failed", function (response) {
+        // alert(response.error.code);
+        // alert(response.error.description);
+        // alert(response.error.source);
+        // alert(response.error.step);
+        // alert(response.error.reason);
+        // alert(response.error.metadata.order_id);
+        // alert(response.error.metadata.payment_id);
+      });
+      document.getElementById("rzp-button1").onclick = function (e) {
+        rzp1.open();
+
+        e.preventDefault();
+      };
+    })
+    .catch((e) => {
+      console.log(e);
+    });
+</script>
