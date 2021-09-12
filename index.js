@@ -11,6 +11,7 @@ app.use(express.json());
 app.use(cors());
 app.use(prodRoute);
 app.use(addressRoute);
+app.use(paymentRoute);
 app.listen(PORT, () => {
   console.log("running");
 });

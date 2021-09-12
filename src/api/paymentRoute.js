@@ -1,12 +1,10 @@
 const express = require("express");
 const Product = require("../models/productModel");
 const Order = require("../models/orders");
-const Users = require("../models/userModel");
 const crypto = require("crypto");
-const auth = require("../auth/auth");
 const razorpay = require("razorpay");
 const route = express.Router();
-route.post("/orders/:user_id", auth, async (req, res) => {
+route.post("/orders/:user_id", async (req, res) => {
   const pay = new razorpay({
     key_id: process.env.PUBLIC_KEY,
     key_secret: process.env.PRIVATE_KEY,
@@ -32,7 +30,7 @@ route.post("/orders/:user_id", auth, async (req, res) => {
     }
   });
 });
-route.post("/verify", auth, (req, res) => {
+route.post("/verify", (req, res) => {
   try {
     console.log(req.body);
     const hmac = crypto.createHmac("sha256", process.env.PRIVATE_KEY);

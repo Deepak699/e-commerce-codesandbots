@@ -1,11 +1,8 @@
 const express = require("express");
 const Product = require("../models/productModel");
-const ref = require("referral-code-generator");
 const Order = require("../models/orders");
 const Users = require("../models/userModel");
-const crypto = require("crypto");
 const auth = require("../auth/auth");
-const razorpay = require("razorpay");
 const route = express.Router();
 route.post("/prod", async (req, res) => {
   try {
