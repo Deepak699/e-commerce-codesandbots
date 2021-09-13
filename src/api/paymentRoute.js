@@ -1,6 +1,7 @@
 const express = require("express");
 const Product = require("../models/productModel");
 const Order = require("../models/orders");
+const auth = require("../auth/auth");
 const crypto = require("crypto");
 const razorpay = require("razorpay");
 const route = express.Router();
@@ -9,7 +10,7 @@ route.post("/orders/:user_id", async (req, res) => {
     key_id: process.env.PUBLIC_KEY,
     key_secret: process.env.PRIVATE_KEY,
   });
-  console.log(req.params.user_id);
+
   let Total_Price = 0;
   var store = [];
   const data = await Order.find({ owner: req.params.user_id });
@@ -30,18 +31,21 @@ route.post("/orders/:user_id", async (req, res) => {
     }
   });
 });
-route.post("/verify", (req, res) => {
+route.post("/verify", auth, async (req, res) => {
   try {
-    console.log(req.body);
     const hmac = crypto.createHmac("sha256", process.env.PRIVATE_KEY);
-
     hmac.update(
-      req.body.razorpay_order_id + "|" + req.body.razorpay_payment_id
+      req.body.body.razorpay_order_id + "|" + req.body.body.razorpay_payment_id
     );
     let generatedSignature = hmac.digest("hex");
-    console.log(generatedSignature);
-    if (generatedSignature == req.body.razorpay_signature) {
-      res.status(201).json({ msg: "payment is successful" });
+    if (generatedSignature == req.body.body.razorpay_signature) {
+      res.status(201).send({ msg: "success" });
+      const orders = await Order.find({ owner: req.user._id });
+      orders.forEach(async (order) => {
+        (order.PaymentId = req.body.body.razorpay_payment_id),
+          (order.RazerpayOrderId = req.body.body.razorpay_order_id);
+        await order.save();
+      });
     }
   } catch (error) {
     res.status(400).json({ msg: "payment failed" });

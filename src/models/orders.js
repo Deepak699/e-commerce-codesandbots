@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const Product = require("./productModel");
 const Schema = mongoose.Schema;
 const orderSchema = Schema(
   {
@@ -13,10 +12,19 @@ const orderSchema = Schema(
       required: true,
       ref: "Product",
     },
-
     quantity: {
       type: Number,
       required: true,
+    },
+    PaymentId: {
+      type: String,
+      required: true,
+      default: "none",
+    },
+    RazerpayOrderId: {
+      type: String,
+      required: true,
+      default: "none",
     },
   },
   {
